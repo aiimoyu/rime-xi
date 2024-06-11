@@ -1,0 +1,16 @@
+patch:
+  "style/font_point": 10
+  "style/label_font_point": 10
+  "style/comment_font_point": 8
+
+  "style/inline_preedit": true
+
+  "style/layout/min_width": 128
+
+  "style/layout/margin_x": 4
+  "style/layout/margin_y": 4
+  "style/layout/spacing": 8
+  "style/layout/candidate_spacing": 8
+  "style/layout/hilite_spacing": 4
+  "style/layout/hilite_padding": 4
+  "style/layout/corner_radius": 4
