@@ -10,12 +10,10 @@ name: rime_ice.en_ext
 version: "2024-05-31"
 sort: by_weight
 ...
-# 一些杂项
 &nbsp;	&nbsp;
 .DS_Store	.DS_Store
 README.md	README.md
 
-# 按键
 Fn	Fn
 cmd	cmd
 cmdline	cmdline
@@ -38,7 +36,6 @@ Esc	Esc
 eject	eject
 
 
-# 月份（据说好像 5、6、7 月不要缩写 https://www.zhihu.com/question/29896678）
 January	January
 Jan.	Jan.
 January	Jan
@@ -53,11 +50,8 @@ Apr.	Apr.
 April	Apr
 May	May
 June	June
-# Jun.	Jun
 June	Jun
 July	July
-# Jul.	Jul
-# July	Jul
 August	August
 Aug.	Aug.
 August	Aug
@@ -78,7 +72,6 @@ Dec.	Dec.
 December	Dec
 
 
-# 星期
 Monday	Monday
 Mon.	Mon.
 Monday	Mon
@@ -105,7 +98,6 @@ Sun.	Sun.
 Sunday	Sun
 
 
-# 生活大爆炸 & 老友记
 Sheldon	Sheldon
 Leonard	Leonard
 Howard	Howard
@@ -121,7 +113,6 @@ Chandler	Chandler
 Phoebe	Phoebe
 
 
-# 特定的排序，为了每组的排序，code 必须保持一致
 hell	hell	2
 he'll	hell	1
 shell	shell	2
@@ -139,7 +130,6 @@ net	net	2
 .NET	dotnet
 
 
-# 带权重的系列
 iPhone	iPhone	999
 iPhone 15	iPhone	4
 iPhone 15 Plus	iPhone	3
@@ -186,7 +176,6 @@ Windows 10	Windows	10
 Windows 11	Windows	11
 
 
-# +_+
 iPhone 3G	iPhone3G
 iPhone 3GS	iPhone3GS
 iPhone 4	iPhone4
@@ -910,7 +899,6 @@ ASMR	ASMR
 Autonomous sensory meridian response	ASMR
 Autonomous sensory meridian response	Autonomoussensorymeridianresponse
 iKlear	iKlear
-# Legal High	ligouhai
 Legal High	LegalHigh
 Werkzeug	Werkzeug
 itsdangerours	itsdangerours
