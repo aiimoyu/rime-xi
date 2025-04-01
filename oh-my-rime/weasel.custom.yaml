@@ -1,55 +1,70 @@
 patch:
+  "style/font_face": "Segoe UI Emoji:30:39, Segoe UI Emoji:23:23, Segoe UI Emoji:2a:2a, Segoe UI Emoji:fe0f:fe0f, Segoe UI Emoji:20e3:20e3, 更纱黑体 UI SC, Microsoft YaHei::medium"
+  "style/label_font_face": "更纱黑体 UI SC::light, Microsoft YaHei::light"
+  "style/comment_font_face": "更纱黑体 UI SC::light:italic, Microsoft YaHei::light:italic"
   "style/font_point": 10
-  "style/label_font_point": 10
+  "style/label_font_point": 8
   "style/comment_font_point": 8
 
   "style/color_scheme": nord
   "style/color_scheme_dark": nord_dark
-  "style/mark_text": ">"
 
   "style/inline_preedit": true
-  "style/horizontal": true
-  "style/hover_type": semi_hilite
+  "style/preedit_type": composition
 
-  "style/layout/border_width": 2
-  "style/layout/margin_x": 4
-  "style/layout/margin_y": 4
+  "style/horizontal": true
+
+  "style/mark_text": "»"
+  "style/hover_type": semi_hilite
+  "style/paging_on_scroll": true
+
+  "style/layout/baseline": 100
+  "style/layout/linespacing": 120
+  "style/layout/min_width": 80
+  "style/layout/border_width": 4
+  "style/layout/margin_x": 7
+  "style/layout/margin_y": 5
   "style/layout/spacing": 8
   # "style/layout/candidate_spacing": 6 # 垂直布局时的候选项间距
-  "style/layout/candidate_spacing": 12
+  "style/layout/candidate_spacing": 16
   "style/layout/hilite_spacing": 6
-  "style/layout/hilite_padding": 2
+  "style/layout/hilite_padding_x": 4
+  "style/layout/hilite_padding_y": 2
+  "style/layout/shadow_radius": 4
+  "style/layout/shadow_offset_x": 1
+  "style/layout/shadow_offset_y": 1
   "style/layout/corner_radius": 4
   "style/layout/round_corner": 4
 
-  "preset_color_schemes/nord_dark":          # 在 `style/color_schema` 指定的配色方案值
-    name: "黑山／Nord Dark"                   # 方案设置中显示的配色名称
-    author: Jungheil                         # 配色作者名称
-    color_format: rgba                       # 颜色格式：argb（0xaarrggbb）；rgba（0xrrggbbaa）；abgr（0xaabbggrr 默认）
+  "preset_color_schemes/nord_dark": # 在 `style/color_schema` 指定的配色方案值
+    name: "黑山／Nord Dark" # 方案设置中显示的配色名称
+    author: Jungheil # 配色作者名称
+    color_format: rgba # 颜色格式：argb（0xaarrggbb）；rgba（0xrrggbbaa）；abgr（0xaabbggrr 默认）
     # 默认配色
-    text_color: 0xECEFF4                     # 文字
-    shadow_color: 0x000000b4                 # 阴影
-    label_color: 0xecf3f4                    # 标签
-    comment_text_color: 0xD08770             # 注释
-    border_color: 0x424242                   # 边框
-    back_color: 0x323232                     # 背景
+    text_color: 0xf5f8fa # 文字
+    shadow_color: 0xa4b0b7b4 # 阴影
+    label_color: 0xa4b0b7 # 标签
+    comment_text_color: 0xe1462e # 注释
+    border_color: 0x1b1f23 # 边框
+    back_color: 0x1b1f23 # 背景
     # 普通候选项配色
-    candidate_back_color: 0x323232           # 背景
-    # candidate_border_color:                # 边框
+    candidate_back_color: 0x1b1f23 # 背景
+    candidate_border_color:                # 边框
     # candidate_shadow_color:                # 阴影
-    candidate_text_color: 0xECEFF4           # 文字
+    candidate_text_color: 0xf5f8fa # 文字
     # 编码区域配色
-    hilited_text_color: 0xECEFF4             # 文字
+    hilited_text_color: 0xf5f8fa # 文字
     # hilited_back_color: 0x5f9f9e           # 背景
     # hilited_shadow_color:                  # 阴影
     # 选中的候选区域配色
-    hilited_mark_color: 0xBF616A             # 标签前的标记
-    hilited_label_color: 0xecf3f4            # 标签
-    hilited_comment_text_color: 0xBF616A     # 注释
-    hilited_candidate_text_color: 0xECEFF4   # 文字
+    hilited_mark_color: 0xe1462e # 标签前的标记
+    hilited_label_color: 0xf5f8fa # 标签
+    hilited_comment_text_color: 0xe1462e # 注释
+    hilited_candidate_text_color: 0xf5f8fa # 文字
     hilited_candidate_border_color: 0x5f9f9e # 边框
-    hilited_candidate_back_color: 0x5f9f9e   # 背景
+    hilited_candidate_back_color: 0x5f9f9e # 背景
     # hilited_candidate_shadow_color:        # 阴影
-    # inline_preedit: false 时翻页箭头颜色，不设置则不显示箭头
-    # nextpage_color: 0x000000               # 下一页
-    # prevpage_color: 0x000000               # 上一页
+    # inline_preedit: false 
+    # 时翻页箭头颜色，不设置则不显示箭头
+    # nextpage_color: 0xf5f8fa               # 下一页
+    # prevpage_color: 0xf5f8fa               # 上一页
