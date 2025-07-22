@@ -57,6 +57,7 @@ engine:
     - lua_translator@*mint_date_time_translator          # 时间、日期、星期、月份
     - lua_translator@*number_translator                  # 金额大小写
     - lua_translator@*chineseLunarCalendar_translator    # 农历
+    - lua_translator@*mint_calculator_translator         # 计算器（lua 动态表达式）
     - punct_translator
     - table_translator@custom_phrase
     - table_translator@melt_eng           # 英文输入（作为子翻译器，优先级需要比原生的低）
@@ -120,16 +121,45 @@ reduce_english_filter:
     wag, wand, womens, wap, wax, weir, won,
     yan, yen]
 
-# 错音错字提示
-corrector_filter:
-  # 当文字没有触发错字错音的情况下，保持原本的注释
-  keep_source_comment: false 
 
 speller:
-  alphabet: 'zyxwvutsrqponmlkjihgfedcba-;/<,>\'
-  initials: zyxwvutsrqponmlkjihgfedcba
+  alphabet: 'zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA-;/<,>\'
+  # initials 定义仅作为始码的按键，排除-;/<,>\'
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
   delimiter: " '"
   algebra:
+    - xform/^([a-zA-Z]+)$/$1①/        # 万象词组 Start
+    - xform/^(.*)ā(.*)$/$1a$2①/
+    - xform/^(.*)á(.*)$/$1a$2②/
+    - xform/^(.*)ǎ(.*)$/$1a$2③/
+    - xform/^(.*)à(.*)$/$1a$2④/
+
+    - xform/^(.*)ō(.*)$/$1o$2①/
+    - xform/^(.*)ó(.*)$/$1o$2②/
+    - xform/^(.*)ǒ(.*)$/$1o$2③/
+    - xform/^(.*)ò(.*)$/$1o$2④/
+
+    - xform/^(.*)ē(.*)$/$1e$2①/
+    - xform/^(.*)é(.*)$/$1e$2②/
+    - xform/^(.*)ě(.*)$/$1e$2③/
+    - xform/^(.*)è(.*)$/$1e$2④/
+
+    - xform/^(.*)ī(.*)$/$1i$2①/
+    - xform/^(.*)í(.*)$/$1i$2②/
+    - xform/^(.*)ǐ(.*)$/$1i$2③/
+    - xform/^(.*)ì(.*)$/$1i$2④/
+
+    - xform/^(.*)ū(.*)$/$1u$2①/
+    - xform/^(.*)ú(.*)$/$1u$2②/
+    - xform/^(.*)ǔ(.*)$/$1u$2③/
+    - xform/^(.*)ù(.*)$/$1u$2④/
+
+    - xform/^(.*)ǖ(.*)$/$1v$2①/
+    - xform/^(.*)ǘ(.*)$/$1v$2②/
+    - xform/^(.*)ǚ(.*)$/$1v$2③/
+    - xform/^(.*)ǜ(.*)$/$1v$2④/
+    - xform/^(.*)ü(.*)$/$1v$2①/
+    - xlit/①②③④/1234                  # 万象 END
     - xform/^r5$/er5/
     - erase/^xx$/
     - derive/^([zcs])h/$1/ # zh, ch, sh => z, c, s
@@ -399,47 +429,19 @@ recognizer:
     wubi98_mint: "Uw[a-z]*'?$"
     stroke: "Ui[a-z]*'?$"
     radical_lookup: "Uu[a-z]*'?$"
+    rmb: "^R[0-9]+[.]?[0-9]*"        # 响应 lua_translator@number_translator 脚本将自动获取第 2 个字符作为触发前缀
+    expression: "^=.*$"              # 响应 lua_translator@expression_translator 脚本将自动获取第 2 个字符作为触发前缀
+    gregorian_to_lunar: "^N[0-9]{1,8}"  # 响应 lua_translator@Chinese_lunar_calendar 公历转农历，输入 N20240115 得到「二〇二四年腊月初五」，脚本将自动获取第 2 个字符作为触发前缀
     uppercase: ""  # 覆写默认的 uppercase 使其可以在输入大写后，输入数字
+
+
 key_binder:
+  import_preset: default
   bindings:
-    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}
-    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}
-    - {accept: "Control+Shift+exclam", toggle: transcription, when: has_menu}
-    - {accept: bracketleft, send: Page_Up, when: paging}      # 使用`[`进行向上翻页（第一页时候无效）
-    - {accept: bracketright, send: Page_Down, when: has_menu} # 使用`]`进行向下翻页
-    - {accept: minus, send: Page_Up, when: paging}     # 使用`-`进行向上翻页（第一页时候无效）
-    - {accept: equal, send: Page_Down, when: has_menu} # 使用`=`进行向下翻页
-    # Emacs 风格的快捷键
-    - { when: composing, accept: Control+p, send: Up }     # composing 时,Control+p 等同于 Up 键
-    - { when: composing, accept: Control+n, send: Down }
-    - { when: composing, accept: Control+b, send: Left }
-    - { when: composing, accept: Control+f, send: Right }
-    - { when: composing, accept: Control+a, send: Home }
-    - { when: composing, accept: Control+e, send: End }
-    - { when: composing, accept: Control+d, send: Delete }
-    - { when: composing, accept: Control+k, send: Shift+Delete } # 删除到行尾
-    - { when: composing, accept: Control+g, send: Escape }       # 退出编码
-    - { when: composing, accept: Alt+v, send: Page_Up }          # 翻页
-    - { when: composing, accept: Control+v, send: Page_Down }
-    # 按词移动光标
-    - { when: composing, accept: ISO_Left_Tab, send: Shift+Left } # ISO_Left_Tab 是 Shift+Tab
-    - { when: composing, accept: Shift+Tab, send: Shift+Left }
-    - { when: composing, accept: Tab, send: Shift+Right }
-    # 翻页
-    - { when: paging, accept: minus, send: Page_Up }             # 编码窗口翻页
-    - { when: has_menu, accept: equal, send: Page_Down }
-    - { when: paging, accept: comma, send: Page_Up }             # 候选窗口翻页
-    - { when: has_menu, accept: period, send: Page_Down }
-    - { when: predicting, accept: comma, send: comma }           # 在预编码模式下,不当作快捷键
-    - { when: predicting, accept: period, send: period }
-    # 切换状态
-    - { when: always, accept: Control+Shift+1, select: .next }   # 切换输入方案
-    - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # 切换中/西文模式
-    - { when: always, accept: Control+Shift+3, toggle: full_shape } # 切换全角/半角
-    - { when: always, accept: Control+Shift+4, toggle: transcription } # 切换简体/繁体
-    - { when: always, accept: Control+Shift+5, toggle: extended_charset } # 切换扩展字符
-    - { when: always, accept: Shift+space, toggle: full_shape } # 另一种切换全角/半角的方式
-    - { when: always, accept: Control+period, toggle: ascii_punct } # 切换中/西文标点
+    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}   # Emoji 快捷键
+    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}    # 当存在候选菜单时，可以切换简体和繁体
+
+
 menu:
   # 候选词个数
   page_size: 6

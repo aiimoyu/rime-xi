@@ -30,6 +30,9 @@ switches:
   - name: full_shape
     states: [ 半角, 全角 ]
     reset: 0
+  - name: tone_display                  #开启后在输入编码的位置实时转换为带声调全拼，不开启则采用系统配置，影响的是preedit_format,归属：super_preedit.lua
+    states: [ 声杳, 声起 ]
+    reset: 0
   - name: transcription
     states: [ 简体 , 繁体 ]
     reset: 0
@@ -62,12 +65,14 @@ engine:
     - lua_translator@*mint_date_time_translator          # 时间、日期、星期、月份
     - lua_translator@*number_translator                  # 金额大小写
     - lua_translator@*chineseLunarCalendar_translator    # 农历
+    - lua_translator@*mint_calculator_translator         # 计算器（lua 动态表达式）
     - table_translator@melt_eng                          # 英文输入（作为子翻译器，优先级需要比原生的低）
     - reverse_lookup_translator@radical_reverse_lookup
     - reverse_lookup_translator@wubi98_mint
     - lua_translator@*force_gc                           # 暴力GC，尝试解决小狼毫长期使用的卡顿
   filters:
     - lua_filter@*corrector_filter               # 错音错字提示
+    - lua_filter@*super_preedit                  # 输入码显示全拼并带上音调
     - lua_filter@*autocap_filter                 # 英文自动大写
     - lua_filter@*auxCode_filter@moqi_aux_code   # 无形码双拼使用墨奇辅助码:  https://github.com/gaboolic/rime-shuangpin-fuzhuma/wiki/%E5%A2%A8%E5%A5%87%E7%A0%81%E6%8B%86%E5%88%86%E8%A7%84%E5%88%99
     - simplifier@emoji_suggestion
@@ -103,10 +108,6 @@ axu_code:
   show_aux_notice: "trigger"
 
 
-# Lua 配置：为 corrector 格式化 comment，占位符为 {comment}
-# 默认 "{comment}" 输入 hun dun 时会在「馄饨」旁边生成 hún tun 的 comment
-# 例如左右加个括号 "({comment})" 就会变成 (hún tun)
-corrector: "{comment}"
 
 
 # Lua 配置: 降低部分英语单词在候选项的位置。
@@ -145,10 +146,6 @@ reduce_english_filter:
     zach
   ]
 
-# 错音错字提示
-corrector_filter:
-  # 当文字没有触发错字错音的情况下，保持原本的注释
-  keep_source_comment: false 
 
 # 中国农历配置
 chineseLunarCalendar_translator: lunar
@@ -160,9 +157,7 @@ translator:
   spelling_hints: 8             # corrector.lua ：为了让错音错字提示的 Lua 同时适配全拼双拼，将拼音显示在 comment 中
   always_show_comments: true    # corrector.lua ：Rime 默认在 preedit 等于 comment 时取消显示 comment，这里强制一直显示，供 corrector.lua 做判断用。
   initial_quality: 1.2          # 拼音的权重应该比英文大
-  comment_format:               # 标记拼音注释，供 corrector.lua 做判断用
-    - xform/^/［/
-    - xform/$/］/
+  comment_format: {comment}     # 将注释以词典字符串形式完全暴露，通过super_preedit.lua完全接管，灵活配置。
   preedit_format:               # preedit_format 影响到输入框的显示和“Shift+回车”上屏的字符
     - xform/([aoe])(\w)/0$2/
     - xform/([bpmnljqxy])n/$1in/
@@ -219,6 +214,10 @@ speller:
   initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
   delimiter: " '"  # 第一位<空格>是拼音之间的分隔符；第二位<'>表示可以手动输入单引号来分割拼音。
   algebra:
+    - xlit/āáǎàōóǒòēéěèīíǐìūúǔùǖǘǚǜü/aaaaooooeeeeiiiiuuuuvvvvv/  # 万象词库 Start
+    - xform/^ng$/eng/
+    - xform/ńg|ňg|ǹg/eng/
+    - xform/ń|ň|ǹ/en/                                            # 万象词库 End
     - erase/^xx$/
     - derive/^([jqxy])u$/$1v/
     - derive/^([aoe].*)$/o$1/
@@ -307,6 +306,7 @@ recognizer:
     wubi98_mint: "Uw[a-z]*'?$"
     radical_lookup: "Uu[a-z]*'?$"
     rmb: "^R[0-9]+[.]?[0-9]*"        # 响应 lua_translator@number_translator 脚本将自动获取第 2 个字符作为触发前缀
+    expression: "^=.*$"              # 响应 lua_translator@expression_translator 脚本将自动获取第 2 个字符作为触发前缀
     gregorian_to_lunar: "^N[0-9]{1,8}"  # 响应 lua_translator@Chinese_lunar_calendar 公历转农历，输入 N20240115 得到「二〇二四年腊月初五」，脚本将自动获取第 2 个字符作为触发前缀
     uppercase: ""  # 覆写默认的 uppercase 使其可以在输入大写后，输入数字
 
@@ -314,43 +314,8 @@ recognizer:
 key_binder:
   import_preset: default
   bindings:
-    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}
-    - {accept: "Control+Shift+exclam", toggle: transcription, when: has_menu}
-    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}
-    - {accept: "Control+Shift+C", toggle: chaifen, when: has_menu} # 拆字滤镜开关
-    - {accept: minus, send: Page_Up, when: paging}     # 使用`-`进行向上翻页（第一页时候无效）
-    - {accept: equal, send: Page_Down, when: has_menu} # 使用`=`进行向下翻页
-    # Emacs 风格的快捷键
-    - { when: composing, accept: Control+p, send: Up }     # composing 时,Control+p 等同于 Up 键
-    - { when: composing, accept: Control+n, send: Down }
-    - { when: composing, accept: Control+b, send: Left }
-    - { when: composing, accept: Control+f, send: Right }
-    - { when: composing, accept: Control+a, send: Home }
-    - { when: composing, accept: Control+e, send: End }
-    - { when: composing, accept: Control+d, send: Delete }
-    - { when: composing, accept: Control+k, send: Shift+Delete } # 删除到行尾
-    - { when: composing, accept: Control+g, send: Escape }       # 退出编码
-    - { when: composing, accept: Alt+v, send: Page_Up }          # 翻页
-    - { when: composing, accept: Control+v, send: Page_Down }
-    # 按词移动光标
-    - { when: composing, accept: ISO_Left_Tab, send: Shift+Left } # ISO_Left_Tab 是 Shift+Tab
-    - { when: composing, accept: Shift+Tab, send: Shift+Left }
-    - { when: composing, accept: Tab, send: Shift+Right }
-    # 翻页
-    - { when: paging, accept: minus, send: Page_Up }             # 编码窗口翻页
-    - { when: has_menu, accept: equal, send: Page_Down }
-    - { when: paging, accept: comma, send: Page_Up }             # 候选窗口翻页
-    - { when: has_menu, accept: period, send: Page_Down }
-    - { when: predicting, accept: comma, send: comma }           # 在预编码模式下,不当作快捷键
-    - { when: predicting, accept: period, send: period }
-    # 切换状态
-    - { when: always, accept: Control+Shift+1, select: .next }   # 切换输入方案
-    - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # 切换中/西文模式
-    - { when: always, accept: Control+Shift+3, toggle: full_shape } # 切换全角/半角
-    - { when: always, accept: Control+Shift+4, toggle: transcription } # 切换简体/繁体
-    - { when: always, accept: Control+Shift+5, toggle: extended_charset } # 切换扩展字符
-    - { when: always, accept: Shift+space, toggle: full_shape } # 另一种切换全角/半角的方式
-    - { when: always, accept: Control+period, toggle: ascii_punct } # 切换中/西文标点
+    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}   # Emoji 快捷键
+    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}    # 当存在候选菜单时，可以切换简体和繁体
     
 menu:
   # 候选词个数
