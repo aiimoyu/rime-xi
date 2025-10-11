@@ -1,10 +1,36 @@
 patch:
   # 语言模型
-  "grammar/language": amz-v3n2m1-zh-hans
-  "grammar/collocation_max_length": 5
-  "grammar/collocation_min_length": 2
-
+  "grammar/language": wanxiang-lts-zh-hans
+  "grammar/collocation_max_length": 8
+  "grammar/collocation_min_length": 3
+  "grammar/collocation_penalty": -10
+  "grammar/non_collocation_penalty": -12
+  "grammar/weak_collocation_penalty": -24
+  "grammar/rear_penalty": -30
   # translator 内加载
-  "translator/contextual_suggestions": true
-  "translator/max_homophones": 7
-  "translator/max_homographs": 7
+  "translator/contextual_suggestions": false
+  "translator/max_homophones": 5
+  "translator/max_homographs": 5
+
+  "melt_eng/enable_completion": true
+  "cn_en/enable_completion": true
+  "cn_en/initial_quality": 0.9
+
+  "recognizer/patterns/email": "^[a-z][-_.0-9a-z]*@.*$"
+  "recognizer/patterns/url": "^(www[.]|https?:|ftp:|mailto:).*$|^[a-z]+[.].+$"
+
+  engine/translators/+:
+    - script_translator@corrected	# 添加次翻译器：自动纠错
+
+  translator/+:
+    translator/prism: rime_mint		# 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字；如主翻译器未指定名称，需取消注释并设置该项
+
+  corrected:
+    enable_correction: true		# 基于 QWERT 键位的纠错。
+    dictionary: rime_mint		# 挂载词库 rime_ice.dict.yaml，，需修改为和主翻译器相同的值
+    user_dict: rime_mint_correction
+    prism: rime_mint		# 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字；需修改为和主翻译器相同的值
+    spelling_hints: 2			# 设定多少字之内显示正确拼音
+    initial_quality: 0.2		# 权重，建议设置至少低于英文
+    enable_completion: false
+    enable_sentence: false
