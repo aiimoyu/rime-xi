@@ -1,0 +1,59 @@
+2026-02-17T08:27:52 +2ms [hyper-designer:AgentFactory:INFO] 创建代理 agent=HCollector
+2026-02-17T08:27:52 +1ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:27:52 +1ms [hyper-designer:AgentFactory:INFO] 代理创建成功 agent=HCollector temperature=0.3 hasModel=false hasMaxTokens=false
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 创建代理 agent=HArchitect
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:27:52 +0ms [hyper-designer:Tools:INFO] 生成工具提示词 runtime=opencode toolCount=2 tools=["ask_user","task"]
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 代理创建成功 agent=HArchitect temperature=0.6 hasModel=true hasMaxTokens=true
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 创建代理 agent=HCritic
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:27:52 +1ms [hyper-designer:Tools:INFO] 生成工具提示词 runtime=opencode toolCount=2 tools=["ask_user","task"]
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 代理创建成功 agent=HCritic temperature=0.1 hasModel=true hasMaxTokens=true
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 创建代理 agent=HEngineer
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:27:52 +0ms [hyper-designer:Tools:INFO] 生成工具提示词 runtime=opencode toolCount=2 tools=["ask_user","task"]
+2026-02-17T08:27:52 +0ms [hyper-designer:AgentFactory:INFO] 代理创建成功 agent=HEngineer temperature=0.4 hasModel=true hasMaxTokens=true
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:27:52 +2ms [hyper-designer:Config:INFO] 加载 Hyper Designer 配置
+2026-02-17T08:27:52 +0ms [hyper-designer:Config:INFO] 配置加载成功 path=/home/li/.config/opencode/hyper-designer/hd-config.json agentCount=4 hasSchema=true
+2026-02-17T08:32:20 +268638ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:32:22 +1385ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:32:31 +9783ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:32:38 +6922ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:32:43 +4832ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:32:50 +6578ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:33:47 +56816ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:33:53 +6211ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:10 +76985ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:19 +9130ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:27 +8634ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:34 +6046ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:37 +3458ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:54 +17113ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:35:58 +3673ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:16 +18449ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:21 +5264ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:28 +6456ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:34 +5571ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:50 +16567ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:36:55 +4829ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:37:04 +9275ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:37:51 +46774ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:37:57 +6552ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:38:09 +11278ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:38:33 +24035ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:38:41 +8081ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:38:51 +9627ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:39:23 +32611ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:39:35 +12206ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:40:57 +81348ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:41:04 +7466ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:41:27 +22666ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:41:52 +25519ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:42:22 +29437ms [hyper-designer:Workflow:INFO] 获取当前工作流状态
+2026-02-17T08:42:32 +9736ms [hyper-designer:Workflow:INFO] 获取当前工作流状态

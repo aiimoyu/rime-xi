@@ -1,0 +1,25 @@
+# Rime installation settings
+# 此文件每台电脑独立，不会被 update.sh 覆盖
+# 根据实际情况修改以下配置
+
+config_version: "2024.01.01"
+
+# 选择要安装的组件
+# 默认使用 oh-my-rime 的配置
+distribution_code_name: rime-luna
+distribution_name: "Rime - 月轮"
+distribution_version: 1.0
+
+# 用户目录设置
+# Linux (IBus): ~/.config/ibus/rime
+# Linux (Fcitx): ~/.config/fcitx/rime
+# macOS (Squirrel): ~/Library/Rime
+# Windows (Weasel): %APPDATA%\Rime
+sync_dir: ~/.config/ibus/rime
+
+# 同步设置
+# 启用用户词库同步
+enable_user_dict: true
+
+# 预装的组件（oh-my-rime 已包含）
+# 不需要额外配置，除非有特殊需求
