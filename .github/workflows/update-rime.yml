@@ -1,10 +1,9 @@
-name: Update Rime Configuration
+name: Update oh-my-rime
 
 on:
   schedule:
-    # 每周一 00:00 UTC 自动更新
-    - cron: '0 0 * * 1'
-  workflow_dispatch: # 允许手动触发
+    - cron: '0 0 * * 1'  # 每周一 00:00 UTC
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,47 +12,17 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Update oh-my-rime subtree
-        run: |
-          echo "Updating oh-my-rime subtree..."
-          git subtree pull --prefix oh-my-rime https://github.com/Mintimate/oh-my-rime.git main --squash
-        continue-on-error: true
-
-      - name: Download Wanxiang LTS dictionary
-        run: |
-          echo "Downloading Wanxiang LTS dictionary..."
-          WANXIANG_URL="https://github.com/amzxyz/RIME-LMDG/releases/download/LTS/wanxiang-lts-zh-hans.gram"
-          curl -L -o wanxiang-lts-zh-hans.gram "$WANXIANG_URL"
-          
-          # 检查下载是否成功
-          if [ -f wanxiang-lts-zh-hans.gram ]; then
-            echo "Wanxiang dictionary downloaded successfully"
-            # 移动到 oh-my-rime 目录（如果需要）
-            mkdir -p oh-my-rime
-            cp wanxiang-lts-zh-hans.gram oh-my-rime/
-          else
-            echo "Failed to download Wanxiang dictionary"
-            exit 1
-          fi
-
-      - name: Commit and push changes
+        run: git subtree pull --prefix oh-my-rime https://github.com/Mintimate/oh-my-rime.git main --squash
+      - name: Commit and push
         run: |
           git add -A
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: auto-update oh-my-rime and wanxiang dictionary [skip ci]"
-            git push
-            echo "Changes pushed successfully"
-          fi
+          git commit -m "chore: auto-update oh-my-rime"
+          git push
