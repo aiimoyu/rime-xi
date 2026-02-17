@@ -1,4 +1,4 @@
-![style](demo.webp)
+![style](./demo.webp)
 
 - [中文 - 简体简介](README.md)
 - [中文 - 繁體簡介](README_zh-CHT.md)
@@ -6,8 +6,21 @@
 
 A template for quickly initializing Rime. Since I use `oh-my-zsh` normally and get a similar feeling when using Rime, I named it `oh-my-rime`. You can also call it `Mint IME` or `Mint`.
 
-If you encounter difficulties with downloading, use the mirrored repository pushed by GitHub Action:
-- [oh-my-rime: https://gitlab.mintimate.cn/Mintimate/oh-my-rime](https://gitlab.mintimate.cn/Mintimate/oh-my-rime)
+If you encounter difficulties downloading, use the mirror repository pushed by GitHub Action:
+
+- [oh-my-rime: https://cnb.cool/Mintimate/rime/oh-my-rime](https://cnb.cool/Mintimate/rime/oh-my-rime)
+
+Or, if you just want to download the Oh-my-rime without cloning the repository via Git, you can use the [CNB](https://cnb.cool/Mintimate/rime/oh-my-rime) automated pipeline packaged zip file when encountering download difficulties:
+
+- [oh-my-rime.zip: https://cnb.cool/Mintimate/rime/oh-my-rime/-/releases/download/latest/oh-my-rime.zip](https://cnb.cool/Mintimate/rime/oh-my-rime/-/releases/download/latest/oh-my-rime.zip)
+
+2025-07-09 Breaking Changes:  
+- The dictionary has been switched from the Frost dictionary to the Wanxiang dictionary to enhance the Terra schema experience and improve compatibility with the Wanxiang model.  
+- The pinyin files within the dictionary have been renamed to start with `rime_mint` for easier future maintenance.  
+
+Due to these breaking changes, the following issues still need to be addressed:  
+- [x] After switching to the Wanxiang dictionary, user dictionaries (.userdb) require script rewriting. Otherwise, tone marks will not display. Provide [offline tools for user migration](https://www.mintimate.cc/en/guide/faQ.html#user-dictionary-phonetic-transcription).  
+- [x] The conflict between the Wanxiang pre-editing script and the error correction script has been resolved, but the error correction style is now consistent with the Wanxiang dictionary style, making them indistinguishable. Consideration is being given to potential adjustments in the future.  
 
 ## Oh-my-rime guide
 
@@ -20,6 +33,7 @@ Rime configuration tutorial:
 You have a QQ account, you can join the group chat(No Ads!): 703260572
 
 **It is strongly recommended to refer to the [documentation ↗](https://www.mintimate.cc) for operation!!!**
+> Project documentation CDN acceleration and security protection sponsored by [Tencent EdgeOne](https://edgeone.ai/zh?from=github). <br/><img src="https://edgeone.ai/media/34fe3a45-492d-4ea4-ae5d-ea1087ca7b4b.png" alt="Tencent EdgeOne" height="20">
 
 The input method scheme included:
 - Mint Pinyin (薄荷拼音) - Full Spelling Input: Full spelling input, suitable for the largest population, so it's the default input method.
@@ -52,6 +66,7 @@ The default address of the local rime configuration file is as follows
   - Weasel: `%APPDATA%\Rime`
 -Mac OS X
   - Squirrel: `~/Library/Rime`
+  - Fcitx5 macOS: `~/.local/share/fcitx5/rime`
 - Linux
   - iBus: `~/.config/ibus/rime`
   - Fcitx5: `~/.local/share/fcitx5/rime`
@@ -71,6 +86,10 @@ With the Hamster input method, how is the 9-grid input used?
 
 Inside the Oh-my-rime, the 9-grid layout has been adapted from Hamster's [9-grid arrangement](https://github.com/imfuxiao/Hamster/) and the [rime-ice's 9-grid](https://github.com/iDvel/rime-ice/blob/main/t9.schema.yaml). To utilize the 9-grid input, both the 9-grid scheme (set under Input Scheme settings) and the 9-grid layout (键盘设置 - 键盘布局 - 中文 9 键) need to be enabled simultaneously.
 
+If you like to use Rime to type long sentences, it is strongly recommended to use it with a language model. Reference tutorial:
+- [How to Configure Language Model in Rime -- Oh-my-rime Configuration Tutorial](https://www.mintimate.cc/en/guide/languageModel.html)
+
+
 ## Configuration file description
 
 - `default.yaml` set the input method, how to switch the input method, turn the page, etc.
@@ -83,30 +102,29 @@ Most of the configuration files are commented. Cooperate with the tutorial: [Con
 
 The dictionary directory [dicts](dicts) in this repository consists of the following:
 
-- [Rime Ice Pinyin Dictionary](https://github.com/iDvel/rime-ice)
+- [Rime-ice Pinyin Dictionary](https://github.com/iDvel/rime-ice)
+- [Rime-frost Pinyin Dictionary](https://github.com/gaboolic/rime-frost)
+- [Rime-Wanxiang Pinyin Dictionary](https://github.com/amzxyz/RIME-LMDG)
 - [98 Wubi Dictionary](https://github.com/yanhuacuo/98wubi-tables)
 - [86 Wubi Dictionary](https://github.com/KyleBing/rime-wubi86-jidian)
 
 Detailed explanation:
 ```txt
-dicts
-├── custom_simple.dict.yaml    # Custom dictionary (suggested for adding your own dictionaries)
-├── other_emoji.dict.yaml      # Emoji dictionary
-├── other_kaomoji.dict.yaml    # Kaomoji (facial expressions) dictionary (activated by `vv`)
-├── rime_ice.41448.dict.yaml   # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.8105.dict.yaml    # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.base.dict.yaml    # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.ext.dict.yaml     # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.cn_en.txt         # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.en.dict.yaml      # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.en_ext.dict.yaml  # Rime Ice dictionary (automatically updated by GitHub Action)
-├── rime_ice.others.dict.yaml  # Rime Ice dictionary (automatically updated by GitHub Action)
-├── terra_pinyin_base.dict.yaml     # Terra Pinyin default dictionary
-├── terra_pinyin_ext.dict.yaml      # Terra Pinyin default dictionary
-├── terra_rime_ice.base.dict.yaml   # Terra Rime Ice dictionary based on Python script conversion and automatic updating
-├── wubi86_core.dict.yaml           # 86 Wubi basic dictionary
-└── wubi98_base.dict.yaml           # 98 Wubi basic dictionary
-```
+dicts  
+├── custom_simple.dict.yaml    # Custom dictionary (recommended for user-added entries)  
+├── other_emoji.dict.yaml      # Emoji dictionary  
+├── other_kaomoji.dict.yaml    # Kaomoji dictionary (activated by pressing 'vv')  
+├── rime_ice.ext.dict.yaml     # Frost dictionary (auto-updated via GitHub Actions)  
+├── rime_ice.cn_en.txt         # Frost dictionary (auto-updated via GitHub Actions)  
+├── rime_ice.en.dict.yaml      # Frost dictionary (auto-updated via GitHub Actions)  
+├── rime_ice.en_ext.dict.yaml  # Frost dictionary (auto-updated via GitHub Actions)  
+├── rime_ice.others.dict.yaml  # Frost dictionary (auto-updated via GitHub Actions)  
+├── rime_mint.base.dict.yaml            # Wanxiang dictionary (auto-updated via GitHub Actions)  
+├── rime_mint.chars.dict.yaml           # Wanxiang dictionary (auto-updated via GitHub Actions)  
+├── rime_mint.correlation.dict.yaml     # Wanxiang dictionary (auto-updated via GitHub Actions)  
+├── rime_mint.ext.dict.yaml             # Wanxiang dictionary (auto-updated via GitHub Actions)  
+├── wubi86_core.dict.yaml           # Wubi 86 core dictionary  
+└── wubi98_base.dict.yaml           # Wubi 98 base dictionary  
 
 For subsequent updates to the dictionaries, you can download the files inside the `dicts` directory of this repository and replace the existing files, except for the `custom_simple.dict.yaml` file.
 
@@ -114,20 +132,22 @@ If you want to expand the dictionaries on your own, you can import them in the d
 
 ```yaml
 ---
-name: rime_mint                  # Make sure the name matches the file name
-version: "2024.02.11"
+name: rime_mint                  # 注意name和文件名一致
+version: "2025.07.06"
 sort: by_weight
-# This section is for the dictionaries used by the input method to supplement and expand the vocabulary
-# Rime Ice Pinyin Dictionary, automatically updated by GitHub Robot
+use_preset_vocabulary: false
+# 此处为 输入法所用到的词库，既补充拓展词库的地方
+# 雾凇拼音词库，由Github Robot自动更新
 import_tables:
-  - dicts/custom_simple          # Custom
-  - dicts/rime_ice.8105          # Rime Ice commonly used character collection
-  - dicts/rime_ice.41448         # Rime Ice complete character collection
-  - dicts/rime_ice.base          # Rime Ice https://github.com/iDvel/rime-ice
-  - dicts/rime_ice.ext           # Rime Ice https://github.com/iDvel/rime-ice
-  - dicts/other_kaomoji          # Kaomoji (facial expressions) (activated by `vv`)
-  - dicts/other_emoji            # Emoji (supplementary, actual usage usually requires OpenCC)
-  - dicts/rime_ice.others        # Rime Ice others dictionary (used for automatic error correction)
+  - dicts/custom_simple          # 自定义
+  - dicts/rime_mint.chars        # 单字词库（万象拼音词库基础版本）
+  - dicts/rime_mint.base         # 基础词库（万象拼音词库基础版本）
+  - dicts/rime_mint.correlation  # 关联词库（万象拼音词库基础版本）
+  - dicts/rime_mint.ext          # 联想词库（万象拼音词库基础版本）
+  - dicts/other_kaomoji          # 颜文字表情（按`VV`呼出)
+  - dicts/rime_ice.others        # 雾凇拼音 others词库（用于自动纠错）
+  # 20240608 Emoji完全交由OpenCC，不再使用字典作为补充
+  # - dicts/other_emoji            # Emoji(仅仅作为补充，实际使用一般是OpenCC生效)
 ...
 ```
 
@@ -150,18 +170,30 @@ import_tables:
 5. [rime-radical-pinyin | Rime Component-based Character Input Schemes (Full Spelling and Double Pinyin)](https://github.com/mirtlecn/rime-radical-pinyin)
 6. [rime-wubi86-jidian](https://github.com/KyleBing/rime-wubi86-jidian)
 7. [Extending RIME with Lua scripts](https://github.com/hchunhui/librime-lua/wiki/Scripting)
+8. [rime-frost | Based on a remastered Rime-ice Pinyin, that is more pure, more accurate in word frequency, and more intelligent.](https://github.com/gaboolic/rime-frost)
+9. [Rime-Wanxiang | A powerful Chinese Pinyin input method](https://github.com/amzxyz/RIME-LMDG)
+
 
 > Especially rime-ice, this solution project, a large number of references to rime-ice. For the word library part, use Python to synchronize the basic word library of rime-ice and enable the ext extension word library that rime-ice does not enable by default.
 
 ## Other Recommended
-- [98 Wubi, http://www.98wubi.com/](http://www.98wubi.com/)
+- [98 Wubi, http://www.98wubi.com/](https://wubi98.github.io/)
 - [86 Wubi, https://github.com/KyleBing/rime-wubi86-jidian](https://github.com/KyleBing/rime-wubi86-jidian)
 - [Rime Pinyin, an excellent Chinese thesaurus](https://github.com/iDvel/rime-ice)
+- [​​Wanxiang Pinyin: A Powerful Yet Complex Pinyin Input Solution](https://github.com/amzxyz/rime_wanxiang)
 
-## ⭐⭐⭐
+
+> The vocabulary of oh-my-rime: ① Starting from 2024-07-29, the pinyin vocabulary uses the frost vocabulary, previously using the terra pinyin vocabulary; ② Starting from 2025-07-09, the vocabulary uses the myriad pinyin vocabulary.
+
+## Star History
 
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Mintimate/oh-my-rime&type=Timeline&theme=dark" />
 <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Mintimate/oh-my-rime&type=Timeline" />
 <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Mintimate/oh-my-rime&type=Timeline" />
 </picture>
+
+## Contributors ✨
+<a href="https://github.com/Mintimate/oh-my-rime/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Mintimate/oh-my-rime" />
+</a>

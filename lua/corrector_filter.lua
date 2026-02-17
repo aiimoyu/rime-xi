@@ -14,17 +14,16 @@ local M = {}
 function M.init(env)
     local config = env.engine.schema.config
     local delimiter = config:get_string('speller/delimiter')
+    env.name_space = env.name_space:gsub('^*', '')
     if delimiter and #delimiter > 0 and delimiter:sub(1,1) ~= ' ' then
         env.delimiter = delimiter:sub(1,1)
     end
-    env.name_space = env.name_space:gsub('^*', '')
-    M.style = config:get_string(env.name_space) or '{comment}'
+    M.style = '{comment}'
     M.corrections = {
         -- 错音
         ["hun dun"] = { text = "馄饨", comment = "hún tun" },
         ["zhu jiao"] = { text = "主角", comment = "zhǔ jué" },
         ["jiao se"] = { text = "角色", comment = "júe sè" },
-        ["pi sa"] = { text = "比萨", comment = "bǐ sà" },
         ["chi pi sa"] = { text = "吃比萨", comment = "chī bǐ sà" },
         ["pi sa bing"] = { text = "比萨饼", comment = "bǐ sà bǐng" },
         ["shui fu"] = { text = "说服", comment = "shuō fú" },
@@ -94,6 +93,10 @@ function M.init(env)
         ["nan jing liu he"] = { text = "南京六合", comment = "nán jīng lù hé" },
         ["nan jing shi liu he"] = { text = "南京六合区", comment = "nán jīng lù hé qū" },
         ["nan jing shi liu he qu"] = { text = "南京市六合区", comment = "nán jīng shì lù hé qū" },
+        ["nuo da"] = { text = "偌大", comment = "偌(ruò)大" },
+        ["yin jiu zhi ke"] = { text = "饮鸩止渴", comment = "饮鸩(zhèn)止渴" },
+        ["yin jiu jie ke"] = { text = "饮鸩解渴", comment = "饮鸩(zhèn)解渴" },
+        ["gong shang jiao zhi yu"] = { text = "宫商角徵羽", comment = "宫商角(jué)徵羽" },
         -- 错字
         ["pu jie"] = { text = "扑街", comment = "仆街" },
         ["pu gai"] = { text = "扑街", comment = "仆街" },
@@ -113,23 +116,36 @@ function M.init(env)
         ["cou huo"] = { text = "凑活", comment = "凑合(he)" },
         ["ju hui"] = { text = "钜惠", comment = "巨惠" },
         ["mo xie zuo"] = { text = "魔蝎座", comment = "摩羯(jié)座" },
-        ["nuo da"] = { text = "诺大", comment = "偌(ruò)大" },
+        ["pi sa"] = { text = "披萨", comment = "比(bǐ)萨" },
     }
 end
 
 function M.func(input, env)
     for cand in input:iter() do
         -- cand.comment 是目前输入的词汇的完整拼音
-        local pinyin = cand.comment:match("^［(.-)］$")
+        local pinyin = cand.comment
         if pinyin and #pinyin > 0 then
             if env.delimiter then
                 pinyin = pinyin:gsub(env.delimiter,' ')
             end
             local c = M.corrections[pinyin]
             if c and cand.text == c.text then
-                cand:get_genuine().comment = string.gsub(M.style, "{comment}", c.comment)
+                local target_comment = '[' .. c.comment .. ']'
+                cand:get_genuine().comment = string.gsub(M.style, "{comment}", target_comment)
+                -- 获取当前 composition 和 segment
+                local context = env.engine.context
+                local composition = context.composition
+                local seg = composition:back()         -- 获取当前 segment
+                -- 设置标签
+                seg.tags = seg.tags + Set({ "correntor" })
             else
-                cand:get_genuine().comment = ""
+                -- 20250708 是否保持原本注释；如: 拼音
+                local keep_source_comment = env.engine.context:get_option("tone_display") or false
+                if keep_source_comment then
+                    cand:get_genuine().comment = string.gsub(M.style, "{comment}", pinyin)
+                else
+                    cand:get_genuine().comment = ""
+                end
             end
         end
         yield(cand)

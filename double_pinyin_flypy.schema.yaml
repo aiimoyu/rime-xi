@@ -9,7 +9,7 @@
 schema:
   schema_id: double_pinyin_flypy
   name: "小鹤双拼-薄荷定制"
-  version: "24.05.29"
+  version: "24.10.02"
   author:
     - Mintimate
   description: |
@@ -35,6 +35,9 @@ switches:
     reset: 1
   - name: full_shape
     states: [ 半角, 全角 ]
+    reset: 0
+  - name: tone_display                  #开启后在输入编码的位置实时转换为带声调全拼，不开启则采用系统配置，影响的是preedit_format,归属：super_preedit.lua
+    states: [ 声杳, 声起 ]
     reset: 0
   - name: transcription
     states: [ 简体 , 繁体 ]
@@ -70,9 +73,10 @@ engine:
   translators:
     - punct_translator                                   # ※ 轉換標點符號
     - script_translator
-    - lua_translator@*mint_date_time_translator          # 时间、日期、星期、月份
+    - lua_translator@*shijian                            # 时间、日期、星期、月份、问候、节气、节日，N模式
     - lua_translator@*number_translator                  # 金额大小写
     - lua_translator@*chineseLunarCalendar_translator    # 农历
+    - lua_translator@*mint_calculator_translator         # 计算器（lua 动态表达式）
     - table_translator@melt_eng                          # 英文输入（作为子翻译器，优先级需要比原生的低）
     - table_translator@cn_en                             # 中英混合词汇
     - reverse_lookup_translator@radical_reverse_lookup
@@ -81,6 +85,7 @@ engine:
     - lua_translator@*force_gc                           # 暴力GC，尝试解决小狼毫长期使用的卡顿
   filters:
     - lua_filter@*corrector_filter            # 错音错字提示
+    - lua_filter@*super_preedit               # 输入码显示全拼并带上音调
     - lua_filter@*autocap_filter              # 英文自动大写
     - simplifier@emoji_suggestion
     - simplifier@transcription_cc
@@ -89,6 +94,67 @@ engine:
     - lua_filter@*reduce_english_filter       # 降低部分英语单词在候选项的位置
     - uniquifier                              # 去重
 
+#shijian:仅仅作为提示使用，编码已经写死，引导键可以在key_binder下修改前缀
+#时间：osj 或者 /sj
+#日期：orq 或者 /rq
+#农历：onl 或者 /nl
+#星期：oxq 或者 /xq
+#今年第几周：oww 或者 /ww
+#节气：ojq 或者 /jq
+#日期+时间：odt 或者 /dt
+#时间戳：ott 或者 /tt
+#大写N日期：N20250315 或者N0312不带年
+#节日：ojr 或者 /jr
+#问候模板：/day 或者 oday
+# 通用日期时间格式化函数（供 /rq、/sj、/dt、N0101、N20150101 场景复用）
+# 支持转义：
+#   \X       —— 转义单个字符 X，按字面量输出（如 \Y \m \H 等）
+#   [[...]]  —— 区块整体按字面量输出
+#
+# 约定占位符：
+# 【日期】
+#   Y  四位年份           0000-9999  例：2025
+#   y  两位年份           00-99      例：25
+#   m  月（前导零）        01-12      例：02
+#   n  月（不带前导零）     1-12       例：2
+#   d  日（前导零）        01-31      例：09
+#   j  日（不带前导零）     1-31       例：9
+#
+# 【时间】
+#   H  24小时（前导零）   00-23      例：08
+#   G  24小时（不带零）   0-23       例：8
+#   I  12小时（前导零）   01-12      例：08
+#   l  12小时（不带零）   1-12       例：8   （注意是小写 L）
+#   M  分钟（前导零）     00-59      例：05
+#   S  秒（前导零）       00-59      例：09
+#   p  am/pm（小写）     am / pm
+#   P  AM/PM（大写）     AM / PM
+# 【时区】
+#   O  带冒号格式        +08:00、-04:30、+05:45
+#   o  不带冒号格式      +0800、-0430、+0545
+#   A  中文时段    凌晨 / 上午 / 中午 / 下午 / 晚上
+date_formats:
+  - "Y年m月d日"
+  - "Y-m-d"
+  - "Y/m/d"
+  - "Y.m.d"
+  - "Ymd"
+  - "Y年n月j日"
+  - "y年n月j日"
+  - "n月j日"
+time_formats:
+  - "H:M"
+  - "H点M分"
+  - "H:M:S"
+  - "H时M分S秒"
+  - "AI:M"
+  - "I:M P"
+datetime_formats:
+  - "Y-m-d H:M:S"
+  - "Y-m-dTH:M:S O"
+  - "YmdHMS"
+  - "Y年m月d日 H点M分"
+  - "y/m/d I:M p"
 
 # 简繁切换
 transcription_cc:
@@ -122,7 +188,7 @@ codeLengthLimit_processor: 25
 
 
 # 小鹤音形配置
-axu_code:
+aux_code:
   # 激活码
   trigger_word: ";"
   # 展示辅码的模式
@@ -168,21 +234,13 @@ reduce_english_filter:
 # 中国农历配置
 chineseLunarCalendar_translator: lunar
 
-# Lua 配置：为 corrector 格式化 comment，占位符为 {comment}
-# 默认 "{comment}" 输入 hun dun 时会在「馄饨」旁边生成 hún tun 的 comment
-# 例如左右加个括号 "({comment})" 就会变成 (hún tun)
-corrector: "{comment}"
-
-
 translator:
   # 字典文件
   dictionary: rime_mint          # 使用的字典文件
   prism: double_pinyin_flypy     # 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字。
   spelling_hints: 8              # corrector.lua ：为了让错音错字提示的 Lua 同时适配全拼双拼，将拼音显示在 comment 中
   always_show_comments: true     # corrector.lua ：Rime 默认在 preedit 等于 comment 时取消显示 comment，这里强制一直显示，供 corrector.lua 做判断用。
-  comment_format:               # 标记拼音注释，供 corrector.lua 做判断用
-    - xform/^/［/
-    - xform/$/］/
+  comment_format: {comment}      # 将注释以词典字符串形式完全暴露，通过super_preedit.lua完全接管，灵活配置。
   preedit_format:
     - xform/([bpmfdtnljqx])n/$1iao/
     - xform/(\w)g/$1eng/
@@ -241,9 +299,15 @@ cn_en:
 # 拼写设定
 speller:
   # 如果不想让什么标点直接上屏，可以加在 alphabet，或者编辑标点符号为两个及以上的映射
-  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA~;
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA;
+  # initials 定义仅作为始码的按键，排除 ; 让单个的 ; 可以直接上屏
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
   delimiter: " `"  # 第一位<空格>是拼音之间的分隔符；第二位<'>表示可以手动输入单引号来分割拼音。
   algebra:
+    - xlit/āáǎàōóǒòēéěèīíǐìūúǔùǖǘǚǜü/aaaaooooeeeeiiiiuuuuvvvvv/  # 万象词库 Start
+    - xform/^ng$/eng/
+    - xform/ńg|ňg|ǹg/eng/
+    - xform/ń|ň|ǹ/en/                                            # 万象词库 End
     - erase/^xx$/
     - derive/^([jqxy])u$/$1v/
     - derive/^([aoe])([ioun])$/$1$1$2/
@@ -307,7 +371,7 @@ radical_reverse_lookup:
 reverse_lookup:
   tags: [wubi98_mint,stroke,radical_lookup]
   overwrite_comment: true
-  dictionary: dicts/rime_ice.8105
+  dictionary: rime_mint
 
 punctuator:
   import_preset: symbols
@@ -336,53 +400,26 @@ recognizer:
   import_preset: default
   patterns:
     url: "^[a-z]+[.].+$"
-    punct: "^/([0-9]0?|[a-z]+)$"
+    punct: "^/([0-9]0?|[a-zA-Z]+)$"
     wubi98_mint: "Uw[a-z]*'?$"
     stroke: "Ui[a-z]*'?$"
     radical_lookup: "Uu[a-z]*'?$"
     rmb: "^R[0-9]+[.]?[0-9]*"        # 响应 lua_translator@number_translator 脚本将自动获取第 2 个字符作为触发前缀
+    expression: "^=.*$"              # 响应 lua_translator@expression_translator 脚本将自动获取第 2 个字符作为触发前缀
     gregorian_to_lunar: "^N[0-9]{1,8}"  # 响应 lua_translator@Chinese_lunar_calendar 公历转农历，输入 N20240115 得到「二〇二四年腊月初五」，脚本将自动获取第 2 个字符作为触发前缀
     uppercase: ""  # 覆写默认的 uppercase 使其可以在输入大写后，输入数字
+
+
 key_binder:
   import_preset: default
+  # Lua 配置: shijian.lua 的引导符，涉及：日期、时间、节日、节气、生日、问候模板等功能
+  shijian_keys: ["o"]
   bindings:
-    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}
-    - {accept: "Control+Shift+exclam", toggle: transcription, when: has_menu}
-    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}
-    - {accept: "Control+Shift+C", toggle: chaifen, when: has_menu} # 拆字滤镜开关
-    - {accept: minus, send: Page_Up, when: paging}     # 使用`-`进行向上翻页（第一页时候无效）
-    - {accept: equal, send: Page_Down, when: has_menu} # 使用`=`进行向下翻页
-    # Emacs 风格的快捷键
-    - { when: composing, accept: Control+p, send: Up }     # composing 时,Control+p 等同于 Up 键
-    - { when: composing, accept: Control+n, send: Down }
-    - { when: composing, accept: Control+b, send: Left }
-    - { when: composing, accept: Control+f, send: Right }
-    - { when: composing, accept: Control+a, send: Home }
-    - { when: composing, accept: Control+e, send: End }
-    - { when: composing, accept: Control+d, send: Delete }
-    - { when: composing, accept: Control+k, send: Shift+Delete } # 删除到行尾
-    - { when: composing, accept: Control+g, send: Escape }       # 退出编码
-    - { when: composing, accept: Alt+v, send: Page_Up }          # 翻页
-    - { when: composing, accept: Control+v, send: Page_Down }
-    # 按词移动光标
-    - { when: composing, accept: ISO_Left_Tab, send: Shift+Left } # ISO_Left_Tab 是 Shift+Tab
-    - { when: composing, accept: Shift+Tab, send: Shift+Left }
-    - { when: composing, accept: Tab, send: Shift+Right }
-    # 翻页
-    - { when: paging, accept: minus, send: Page_Up }             # 编码窗口翻页
-    - { when: has_menu, accept: equal, send: Page_Down }
-    - { when: paging, accept: comma, send: Page_Up }             # 候选窗口翻页
-    - { when: has_menu, accept: period, send: Page_Down }
-    - { when: predicting, accept: comma, send: comma }           # 在预编码模式下,不当作快捷键
-    - { when: predicting, accept: period, send: period }
-    # 切换状态
-    - { when: always, accept: Control+Shift+1, select: .next }   # 切换输入方案
-    - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # 切换中/西文模式
-    - { when: always, accept: Control+Shift+3, toggle: full_shape } # 切换全角/半角
-    - { when: always, accept: Control+Shift+4, toggle: simplification } # 切换简体/繁体
-    - { when: always, accept: Control+Shift+5, toggle: extended_charset } # 切换扩展字符
-    - { when: always, accept: Shift+space, toggle: full_shape } # 另一种切换全角/半角的方式
-    - { when: always, accept: Control+period, toggle: ascii_punct } # 切换中/西文标点
+    - {accept: "Control+Shift+E", toggle: emoji_suggestion, when: always}   # Emoji 快捷键
+    - {accept: "Control+Shift+1", toggle: transcription, when: has_menu}           # 当存在候选菜单时，可以切换简体和繁体
+    - {accept: "Control+Shift+exclam", toggle: transcription, when: has_menu}      # 当存在候选菜单时，可以切换简体和繁体（小狼毫可能读取这个）
+    - {accept: "Control+Shift+C", toggle: chaifen, when: has_menu}          # 拆字滤镜开关
+    
 menu:
   # 候选词个数
   page_size: 6

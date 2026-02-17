@@ -1,6 +1,10 @@
 # Rime default settings
 # encoding: utf-8
 
+# 注意⚠️: 因为薄荷想要兼容 https://github.com/yanhuacuo/rimetool ，所以方案内有 default.yaml 配置的冗余
+# 如果修改 page_size、key_binder 等内容，请不要使用 default.custom.yaml ，直接修改方案配置
+# 参考: https://www.mintimate.cc/zh/guide/configurationOverride.html
+
 # Fork From: https://github.com/rime/librime/blob/3bc65c990546aa2062ecd1eb593d54d2949644cd/data/minimal/default.yaml
 config_version: "24.03.24"
 
@@ -145,8 +149,8 @@ key_binder:
     - { when: composing, accept: Shift+Tab, send: Shift+Left }
     - { when: composing, accept: Tab, send: Shift+Right }
     # 翻页
-    - { when: paging, accept: minus, send: Page_Up }             # 编码窗口翻页
-    - { when: has_menu, accept: equal, send: Page_Down }
+    - { when: paging, accept: minus, send: Page_Up }             # 使用`-`进行向上翻页（第一页时候无效）
+    - { when: has_menu, accept: equal, send: Page_Down }         # 使用`=`进行向下翻页
     - { when: paging, accept: comma, send: Page_Up }             # 候选窗口翻页
     - { when: has_menu, accept: period, send: Page_Down }
     - { when: predicting, accept: comma, send: comma }           # 在预编码模式下,不当作快捷键
@@ -155,7 +159,7 @@ key_binder:
     - { when: always, accept: Control+Shift+1, select: .next }   # 切换输入方案
     - { when: always, accept: Control+Shift+2, toggle: ascii_mode } # 切换中/西文模式
     - { when: always, accept: Control+Shift+3, toggle: full_shape } # 切换全角/半角
-    - { when: always, accept: Control+Shift+4, toggle: simplification } # 切换简体/繁体
+    - { when: always, accept: Control+Shift+4, toggle: transcription } # 切换简体/繁体
     - { when: always, accept: Control+Shift+5, toggle: extended_charset } # 切换扩展字符
     - { when: always, accept: Shift+space, toggle: full_shape } # 另一种切换全角/半角的方式
     - { when: always, accept: Control+period, toggle: ascii_punct } # 切换中/西文标点
