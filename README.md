@@ -63,7 +63,27 @@ bash ./update.sh ~/.config/ibus/rime
 - **macOS (Squirrel)**: 右键系统托盘图标 → 重新部署
 - **Windows (Weasel)**: 右键系统托盘图标 → 重新部署
 
-## 自动更新
+## 更新配置
+
+### Linux/macOS
+```bash
+bash update.sh                          # 使用默认目录
+bash update.sh /path/to/rime            # 自定义目录
+```
+
+### Windows
+```cmd
+update.bat                              # 使用默认目录
+update.bat D:\RimeConfig                # 自定义目录
+```
+
+### 排除文件
+以下文件不会被覆盖：
+- `installation.yaml` - 机器独有配置
+- `*.custom.yaml` - 用户自定义配置
+
+### 手动创建 installation.yaml
+此文件不在仓库中，需要在系统目录手动创建，包含每台电脑的独立配置信息。
 
 ### GitHub Action
 
@@ -85,7 +105,7 @@ rime-xi/
 │   └── update-rime.yml      # GitHub Action 自动更新工作流
 ├── oh-my-rime/              # oh-my-rime 子模块
 │   └── wanxiang-lts-zh-hans.gram  # 万象词库
-├── installation.yaml        # 安装配置（每台电脑独立）
+├── installation.yaml        # 安装配置（不在仓库中，每台电脑独立）
 ├── update.sh                # 本地更新脚本
 └── README.md                # 说明文档
 ```
