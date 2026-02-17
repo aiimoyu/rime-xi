@@ -26,7 +26,7 @@ patch:
     translator/prism: rime_mint		# 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字；如主翻译器未指定名称，需取消注释并设置该项
 
   corrected:
-    enable_correction: true		# 基于 QWERT 键位的纠错。
+    enable_correction: false		# 基于 QWERT 键位的纠错。
     dictionary: rime_mint		# 挂载词库 rime_ice.dict.yaml，，需修改为和主翻译器相同的值
     user_dict: rime_mint_correction
     prism: rime_mint		# 多方案共用一个词库时，为避免冲突，需要用 prism 指定一个名字；需修改为和主翻译器相同的值
