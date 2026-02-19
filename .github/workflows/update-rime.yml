@@ -20,9 +20,17 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - name: Update oh-my-rime subtree
-        run: git subtree pull --prefix oh-my-rime https://github.com/Mintimate/oh-my-rime.git main --squash
-      - name: Commit and push
         run: |
-          git add -A
-          git commit -m "chore: auto-update oh-my-rime"
-          git push
+          # git subtree pull 会自动创建 merge commit
+          # 有更新时：创建 commit，working tree clean
+          # 无更新时：返回非零 exit code（忽略）
+          git subtree pull --prefix oh-my-rime https://github.com/Mintimate/oh-my-rime.git main --squash || true
+          
+          # 检查是否有新 commit 需要推送
+          if git rev-parse --verify HEAD >/dev/null 2>&1 && \
+             ! git ls-remote origin "refs/heads/$(git rev-parse --abbrev-ref HEAD)" | grep -q "$(git rev-parse HEAD)"; then
+            echo "New commits detected, pushing to remote..."
+            git push
+          else
+            echo "No new commits to push (already up to date)"
+          fi
