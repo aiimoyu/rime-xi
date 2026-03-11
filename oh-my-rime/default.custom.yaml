@@ -3,6 +3,7 @@ patch:
     - schema: rime_mint            # 薄荷拼音
     - schema: double_pinyin_flypy  # 小鹤双拼
     - schema: wubi98_mint          # 五笔98-五笔小筑
+    - schema: rime_mint_mobile     # 薄荷拼音-移动端方案
       
   "menu/page_size": 6
 

@@ -1,0 +1,9 @@
+name: 薄荷输入法
+author: aaimoyu
+version: 1.0.0
+description: 基于oh-my-rime的摸鱼26键方案
+url: https://github.com/aiimoyu/rime-xi
+create_time: 2026-03-10
+update_time: 2026-03-10
+use_theme:
+  default: "oh-my-rime/themes/moyu"
